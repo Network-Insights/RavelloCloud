@@ -1,0 +1,48 @@
+
+r2#sh run
+! Command: show running-config
+! device: r2 (vEOS, EOS-4.15.evans-CVP-EFT1)
+!
+! boot system flash:EOS.swi
+!
+transceiver qsfp default-mode 4x10G
+!
+hostname r2
+!
+spanning-tree mode mstp
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret 5 $1$fOUqEBo1$RuET1fitCeJNfuh8iyflt.
+!
+vlan 11
+!
+interface Ethernet1
+   no switchport
+   ip address 172.16.1.1/31
+!
+interface Ethernet2
+   switchport access vlan 11
+!
+interface Ethernet3
+   no switchport
+   ip address 192.168.100.3/24
+!
+interface Loopback0
+   ip address 172.16.0.2/32
+!
+interface Management1
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan vlan 11 vni 10010
+   vxlan vlan 11 flood vtep 172.16.0.1
+!
+ip routing
+!
+router bgp 101
+   neighbor 172.16.1.0 remote-as 100
+   neighbor 172.16.1.0 maximum-routes 12000
+   redistribute connected
+   redistribute static
