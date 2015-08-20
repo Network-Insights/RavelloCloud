@@ -1,0 +1,39 @@
+hostname r1
+!
+spanning-tree mode mstp
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret 5 $1$FN74zlKI$//bKZ5BzeYwb3SpbXAKcN.
+!
+vlan 10
+!
+interface Ethernet1
+   no switchport
+   ip address 172.16.1.0/31
+!
+interface Ethernet2
+   switchport access vlan 10
+!
+interface Ethernet3
+   no switchport
+   ip address 192.168.100.1/24
+!
+interface Loopback0
+   ip address 172.16.0.1/32
+!
+interface Management1
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan vlan 10 vni 10010
+   vxlan vlan 10 flood vtep 172.16.0.2
+!
+ip routing
+!
+router bgp 100
+   neighbor 172.16.1.1 remote-as 101
+   neighbor 172.16.1.1 maximum-routes 12000
+   redistribute connected
+   redistribute static
