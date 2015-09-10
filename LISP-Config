@@ -1,0 +1,61 @@
+[admin@l5 lispers.net]$ vi lisp.config
+lisp debug {
+    etr = yes
+    core = no
+    rtr = no
+    map-server = no
+    itr = yes
+    ddt-node = no
+    map-resolver = no
+}
+lisp user-account {
+    username = root
+    password = =b9e5c39708999f844a3c864e863c12618bf8a3f5
+    super-user = yes
+}
+lisp xtr-parameters {
+    rloc-probing = no
+    data-plane-security = no
+    nonce-echoing = no
+    nat-traversal = no
+    flow-logging = no
+    data-plane-logging = yes
+}
+lisp map-resolver {
+#    dns-name = c1
+    address = 172.16.0.22
+}
+lisp map-server {
+#    dns-name = c2
+    address = 172.16.0.22
+    authentication-key = arista
+}
+lisp database-mapping {
+    prefix {
+        eid-prefix = 'leaf-L5'
+    }
+    prefix {
+        eid-prefix = 1.0.0.0/8
+        dynamic-eid = yes
+    }
+    prefix {
+        eid-prefix = 5.0.0.0/8
+    }
+    rloc {
+        address = 172.16.2.11
+        rloc-record-name = L5-et1
+    }
+    rloc {
+        address = 172.16.2.27
+        rloc-record-name = L5-et2
+    }
+}
+lisp interface {
+    interface-name = allow-1.1.1.1
+    device = eth0
+    instance-id = 0
+    dynamic-eid = 1.0.0.0/8
+    dynamic-eid-device = et5
+}
+#-----------------------------------------------------------------------------#
+ 
