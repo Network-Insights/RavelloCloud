@@ -1,0 +1,1851 @@
+JUMP HOST
+
+
+JUMPHOST#
+JUMPHOST#
+JUMPHOST#
+JUMPHOST#
+JUMPHOST#
+JUMPHOST#sh run
+Building configuration...
+
+Current configuration : 1412 bytes
+!
+! Last configuration change at 15:35:18 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname JUMPHOST
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+ip domain name ravello
+ip host RR2 192.168.254.29
+ip host RR1 192.168.254.28
+ip host PE8 192.168.254.27
+ip host PE4 192.168.254.23
+ip host P2 192.168.254.12
+ip host P1 192.168.254.10
+ip host PE3 192.168.254.22
+ip host PE2 192.168.254.21
+ip host PE1 192.168.254.20
+ip host RR3 192.168.254.30
+ip host PE7 192.168.254.26
+ip host PE6 192.168.254.25
+ip host PE5 192.168.254.24
+ip host P3 192.168.254.13
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$Mnim$s4lj7Y81gsCiKPfR/Yh8w/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1
+ ip address 192.168.254.100 255.255.255.0
+ negotiation auto
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 192.168.254.200
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ password cisco
+ login local
+!
+!
+end
+
+JUMPHOST#
+
+PE1
+
+
+PE1#
+PE1#sh run
+Building configuration...
+
+Current configuration : 2532 bytes
+!
+! Last configuration change at 18:31:47 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname PE1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE1
+ rd 1:1
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback10
+ ip vrf forwarding PE1
+ ip address 10.10.10.10 255.255.255.255
+!
+interface Loopback100
+ ip address 10.10.10.1 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Loopback101
+ no ip address
+ ipv6 enable
+!
+interface GigabitEthernet1
+ ip address 172.16.1.2 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.20 255.255.255.0
+ negotiation auto
+ ipv6 address 2001:1:1:1::/128
+ ipv6 enable
+!
+router ospf 1
+ network 172.16.1.2 0.0.0.0 area 0
+!
+router bgp 100
+ bgp log-neighbor-changes
+ neighbor 10.10.10.2 remote-as 100
+ neighbor 10.10.10.2 update-source Loopback100
+ neighbor 10.10.10.3 remote-as 100
+ neighbor 10.10.10.3 update-source Loopback100
+ neighbor 10.10.10.4 remote-as 100
+ neighbor 10.10.10.4 update-source Loopback100
+ neighbor 10.10.10.11 remote-as 100
+ neighbor 10.10.10.11 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.2 activate
+  neighbor 10.10.10.3 activate
+  neighbor 10.10.10.4 activate
+  no neighbor 10.10.10.11 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.2 activate
+  neighbor 10.10.10.2 send-community both
+  neighbor 10.10.10.3 activate
+  neighbor 10.10.10.3 send-community both
+  neighbor 10.10.10.4 activate
+  neighbor 10.10.10.4 send-community both
+ exit-address-family
+ !
+ address-family ipv6
+  redistribute connected
+  neighbor 10.10.10.11 activate
+  neighbor 10.10.10.11 send-community extended
+  neighbor 10.10.10.11 send-label
+ exit-address-family
+ !
+ address-family ipv4 vrf PE1
+  redistribute connected
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+mpls ldp router-id Loopback100
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+PE2
+
+PE2#sh run
+Building configuration...
+
+Current configuration : 2521 bytes
+!
+! Last configuration change at 18:36:49 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname PE2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE1
+ rd 1:1
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$u7Br$CFWm8JDC8ZiT7VHxG2QEg0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip vrf forwarding PE1
+ ip address 10.10.10.20 255.255.255.255
+!
+interface Loopback100
+ ip address 10.10.10.2 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Loopback101
+ no ip address
+ ipv6 enable
+!
+interface GigabitEthernet1
+ ip address 172.16.2.2 255.255.255.0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.21 255.255.255.0
+ negotiation auto
+ ipv6 address 2001:2:2:2::/128
+ ipv6 address 2001:2:2:2::2/128
+ ipv6 enable
+!
+router ospf 1
+ network 172.16.2.2 0.0.0.0 area 0
+!
+router bgp 100
+ bgp log-neighbor-changes
+ neighbor 10.10.10.1 remote-as 100
+ neighbor 10.10.10.1 update-source Loopback100
+ neighbor 10.10.10.3 remote-as 100
+ neighbor 10.10.10.3 update-source Loopback100
+ neighbor 10.10.10.4 remote-as 100
+ neighbor 10.10.10.4 update-source Loopback100
+ neighbor 10.10.10.11 remote-as 100
+ neighbor 10.10.10.11 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.1 activate
+  neighbor 10.10.10.3 activate
+  neighbor 10.10.10.4 activate
+  no neighbor 10.10.10.11 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.1 activate
+  neighbor 10.10.10.1 send-community both
+  neighbor 10.10.10.3 activate
+  neighbor 10.10.10.3 send-community both
+  neighbor 10.10.10.4 activate
+  neighbor 10.10.10.4 send-community both
+ exit-address-family
+ !
+ address-family ipv6
+  redistribute connected
+  neighbor 10.10.10.11 activate
+  neighbor 10.10.10.11 send-community both
+  neighbor 10.10.10.11 send-label
+ exit-address-family
+ !
+ address-family ipv4 vrf PE1
+  redistribute connected
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+mpls ldp router-id Loopback100
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+PE2#
+
+
+PE3#sh run
+Building configuration...
+
+Current configuration : 2181 bytes
+!
+! Last configuration change at 11:29:27 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname PE3
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE1
+ rd 1:1
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback10
+ ip vrf forwarding PE1
+ ip address 10.10.10.30 255.255.255.255
+!
+interface Loopback100
+ ip address 10.10.10.3 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.3.2 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.22 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.3.2 0.0.0.0 area 0
+!
+router bgp 100
+ bgp log-neighbor-changes
+ neighbor 10.10.10.1 remote-as 100
+ neighbor 10.10.10.1 update-source Loopback100
+ neighbor 10.10.10.2 remote-as 100
+ neighbor 10.10.10.2 update-source Loopback100
+ neighbor 10.10.10.4 remote-as 100
+ neighbor 10.10.10.4 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.1 activate
+  neighbor 10.10.10.2 activate
+  neighbor 10.10.10.4 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.1 activate
+  neighbor 10.10.10.1 send-community both
+  neighbor 10.10.10.2 activate
+  neighbor 10.10.10.2 send-community both
+  neighbor 10.10.10.4 activate
+  neighbor 10.10.10.4 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PE1
+  redistribute connected
+ exit-address-family
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+mpls ldp router-id Loopback100
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+line vty 5 14
+ password cisco
+ login local
+!
+!
+end
+
+
+PE4
+
+PE4#sh run
+Building configuration...
+
+Current configuration : 2049 bytes
+!
+! Last configuration change at 11:37:40 UTC Mon Sep 21 2015
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname PE4
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE1
+ rd 1:1
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$EiNJ$bXBXv0VwrsuDke8BIZ0A60
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback10
+ ip vrf forwarding PE1
+ ip address 10.10.10.40 255.255.255.255
+!
+interface Loopback100
+ ip address 10.10.10.4 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.4.2 255.255.255.0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.23 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.4.2 0.0.0.0 area 0
+!
+router bgp 100
+ bgp log-neighbor-changes
+ neighbor 10.10.10.1 remote-as 100
+ neighbor 10.10.10.1 update-source Loopback100
+ neighbor 10.10.10.2 remote-as 100
+ neighbor 10.10.10.2 update-source Loopback100
+ neighbor 10.10.10.3 remote-as 100
+ neighbor 10.10.10.3 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.1 activate
+  neighbor 10.10.10.2 activate
+  neighbor 10.10.10.3 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.1 activate
+  neighbor 10.10.10.1 send-community both
+  neighbor 10.10.10.2 activate
+  neighbor 10.10.10.2 send-community both
+  neighbor 10.10.10.3 activate
+  neighbor 10.10.10.3 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PE1
+  redistribute connected
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+mpls ldp router-id Loopback100
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ password cisco
+ login local
+!
+!
+end
+
+PE5#sh run
+Building configuration...
+
+Current configuration : 1854 bytes
+!
+! Last configuration change at 15:46:03 UTC Mon Sep 21 2015
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname PE5
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE2
+ rd 2:2
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$u7Br$CFWm8JDC8ZiT7VHxG2QEg0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip vrf forwarding PE2
+ ip address 10.10.10.50 255.255.255.255
+!
+interface Loopback100
+ ip address 10.10.10.5 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.5.2 255.255.255.0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.24 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.5.2 0.0.0.0 area 0
+!
+router bgp 200
+ bgp log-neighbor-changes
+ neighbor 10.10.10.9 remote-as 200
+ neighbor 10.10.10.9 update-source Loopback100
+ neighbor 10.10.10.10 remote-as 200
+ neighbor 10.10.10.10 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.10 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.9 send-community both
+  neighbor 10.10.10.10 activate
+  neighbor 10.10.10.10 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PE2
+  redistribute connected
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+PE7
+
+
+PE7#sh run
+Building configuration...
+
+Current configuration : 1880 bytes
+!
+! Last configuration change at 16:29:29 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname PE7
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE2
+ rd 2:2
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$u7Br$CFWm8JDC8ZiT7VHxG2QEg0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip vrf forwarding PE2
+ ip address 10.10.10.70 255.255.255.255
+!
+interface Loopback100
+ ip address 10.10.10.7 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.7.2 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.26 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.7.2 0.0.0.0 area 0
+!
+router bgp 200
+ bgp log-neighbor-changes
+ neighbor 10.10.10.9 remote-as 200
+ neighbor 10.10.10.9 update-source Loopback100
+ neighbor 10.10.10.10 remote-as 200
+ neighbor 10.10.10.10 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.10 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.9 send-community both
+  neighbor 10.10.10.10 activate
+  neighbor 10.10.10.10 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PE2
+  redistribute connected
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+PE8
+
+PE8#
+PE8#sh run
+Building configuration...
+
+Current configuration : 1862 bytes
+!
+! Last configuration change at 16:15:05 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname PE8
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE2
+ rd 2:2
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$u7Br$CFWm8JDC8ZiT7VHxG2QEg0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip vrf forwarding PE2
+ ip address 10.10.10.80 255.255.255.255
+!
+interface Loopback100
+ ip address 10.10.10.8 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.8.2 255.255.255.0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.27 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.8.2 0.0.0.0 area 0
+!
+router bgp 200
+ bgp log-neighbor-changes
+ neighbor 10.10.10.9 remote-as 200
+ neighbor 10.10.10.9 update-source Loopback100
+ neighbor 10.10.10.10 remote-as 200
+ neighbor 10.10.10.10 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.10 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.9 send-community both
+  neighbor 10.10.10.10 activate
+  neighbor 10.10.10.10 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PE2
+  redistribute connected
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+RR1
+
+RR-1#
+RR-1#sh run
+Building configuration...
+
+Current configuration : 2248 bytes
+!
+! Last configuration change at 16:15:29 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname RR-1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$u7Br$CFWm8JDC8ZiT7VHxG2QEg0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback100
+ ip address 10.10.10.9 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.9.2 255.255.255.0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.28 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.9.2 0.0.0.0 area 0
+!
+router bgp 200
+ bgp cluster-id 1.1.1.1
+ bgp log-neighbor-changes
+ neighbor 10.10.10.5 remote-as 200
+ neighbor 10.10.10.5 update-source Loopback100
+ neighbor 10.10.10.6 remote-as 200
+ neighbor 10.10.10.6 update-source Loopback100
+ neighbor 10.10.10.7 remote-as 200
+ neighbor 10.10.10.7 update-source Loopback100
+ neighbor 10.10.10.8 remote-as 200
+ neighbor 10.10.10.8 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.5 activate
+  neighbor 10.10.10.6 activate
+  neighbor 10.10.10.7 activate
+  neighbor 10.10.10.8 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.5 activate
+  neighbor 10.10.10.5 send-community both
+  neighbor 10.10.10.5 route-reflector-client
+  neighbor 10.10.10.6 activate
+  neighbor 10.10.10.6 send-community both
+  neighbor 10.10.10.6 route-reflector-client
+  neighbor 10.10.10.7 activate
+  neighbor 10.10.10.7 send-community extended
+  neighbor 10.10.10.7 route-reflector-client
+  neighbor 10.10.10.8 activate
+  neighbor 10.10.10.8 send-community extended
+  neighbor 10.10.10.8 route-reflector-client
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+line vty 5
+ password cisco
+ login local
+!
+!
+end
+
+
+RR-2
+
+RR-2#
+RR-2#sh run
+Building configuration...
+
+Current configuration : 2211 bytes
+!
+! Last configuration change at 16:15:52 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname RR-2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$u7Br$CFWm8JDC8ZiT7VHxG2QEg0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback100
+ ip address 10.10.10.10 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.10.2 255.255.255.0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.29 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.10.2 0.0.0.0 area 0
+!
+router bgp 200
+ bgp cluster-id 1.1.1.1
+ bgp log-neighbor-changes
+ neighbor 10.10.10.5 remote-as 200
+ neighbor 10.10.10.5 update-source Loopback100
+ neighbor 10.10.10.6 remote-as 200
+ neighbor 10.10.10.6 update-source Loopback100
+ neighbor 10.10.10.7 remote-as 200
+ neighbor 10.10.10.7 update-source Loopback100
+ neighbor 10.10.10.8 remote-as 200
+ neighbor 10.10.10.8 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.5 activate
+  neighbor 10.10.10.6 activate
+  neighbor 10.10.10.7 activate
+  neighbor 10.10.10.8 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.5 activate
+  neighbor 10.10.10.5 send-community both
+  neighbor 10.10.10.5 route-reflector-client
+  neighbor 10.10.10.6 activate
+  neighbor 10.10.10.6 send-community both
+  neighbor 10.10.10.6 route-reflector-client
+  neighbor 10.10.10.7 activate
+  neighbor 10.10.10.7 send-community extended
+  neighbor 10.10.10.7 route-reflector-client
+  neighbor 10.10.10.8 activate
+  neighbor 10.10.10.8 send-community extended
+  neighbor 10.10.10.8 route-reflector-client
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+RR-3
+
+Current configuration : 1685 bytes
+!
+! Last configuration change at 18:18:10 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname RR3
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$u7Br$CFWm8JDC8ZiT7VHxG2QEg0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback100
+ ip address 10.10.10.11 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.11.2 255.255.255.0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.30 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.11.2 0.0.0.0 area 0
+!
+router bgp 100
+ bgp log-neighbor-changes
+ no bgp default ipv4-unicast
+ neighbor 10.10.10.1 remote-as 100
+ neighbor 10.10.10.1 update-source Loopback100
+ neighbor 10.10.10.2 remote-as 100
+ neighbor 10.10.10.2 update-source Loopback100
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor 10.10.10.1 activate
+  neighbor 10.10.10.1 route-reflector-client
+  neighbor 10.10.10.1 send-label
+  neighbor 10.10.10.2 activate
+  neighbor 10.10.10.2 route-reflector-client
+  neighbor 10.10.10.2 send-label
+ exit-address-family
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+
+JUMP
+
+
+JUMPHOST#
+JUMPHOST#
+JUMPHOST#
+JUMPHOST#
+JUMPHOST#
+JUMPHOST#sh run
+Building configuration...
+
+Current configuration : 1412 bytes
+!
+! Last configuration change at 15:35:18 UTC Mon Sep 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname JUMPHOST
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+ip domain name ravello
+ip host RR2 192.168.254.29
+ip host RR1 192.168.254.28
+ip host PE8 192.168.254.27
+ip host PE4 192.168.254.23
+ip host P2 192.168.254.12
+ip host P1 192.168.254.10
+ip host PE3 192.168.254.22
+ip host PE2 192.168.254.21
+ip host PE1 192.168.254.20
+ip host RR3 192.168.254.30
+ip host PE7 192.168.254.26
+ip host PE6 192.168.254.25
+ip host PE5 192.168.254.24
+ip host P3 192.168.254.13
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$Mnim$s4lj7Y81gsCiKPfR/Yh8w/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1
+ ip address 192.168.254.100 255.255.255.0
+ negotiation auto
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 192.168.254.200
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ password cisco
+ login local
+!
+!
+end
+
+JUMPHOST#
+
+
+
+
+
+
+
+
+
+
+
+
