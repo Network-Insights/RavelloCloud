@@ -1362,12 +1362,16 @@ router bgp 200
  neighbor 10.10.10.7 update-source Loopback100
  neighbor 10.10.10.8 remote-as 200
  neighbor 10.10.10.8 update-source Loopback100
+ neighbor 10.10.10.10 remote-as 200
+ neighbor 10.10.10.10 update-source Loopback100
+ 
  !
  address-family ipv4
   neighbor 10.10.10.5 activate
   neighbor 10.10.10.6 activate
   neighbor 10.10.10.7 activate
   neighbor 10.10.10.8 activate
+ neighbor 10.10.10.10 activate
  exit-address-family
  !
  address-family vpnv4
@@ -1383,6 +1387,9 @@ router bgp 200
   neighbor 10.10.10.8 activate
   neighbor 10.10.10.8 send-community extended
   neighbor 10.10.10.8 route-reflector-client
+ neighbor 10.10.10.10 activate
+  neighbor 10.10.10.10 send-community extended
+  neighbor 10.10.10.10 route-reflector-client
  exit-address-family
 !
 !
@@ -1519,12 +1526,16 @@ router bgp 200
  neighbor 10.10.10.7 update-source Loopback100
  neighbor 10.10.10.8 remote-as 200
  neighbor 10.10.10.8 update-source Loopback100
+ neighbor 10.10.10.9 remote-as 200
+ neighbor 10.10.10.9 update-source Loopback100
+ 
  !
  address-family ipv4
   neighbor 10.10.10.5 activate
   neighbor 10.10.10.6 activate
   neighbor 10.10.10.7 activate
   neighbor 10.10.10.8 activate
+ neighbor 10.10.10.9 activate
  exit-address-family
  !
  address-family vpnv4
@@ -1540,6 +1551,9 @@ router bgp 200
   neighbor 10.10.10.8 activate
   neighbor 10.10.10.8 send-community extended
   neighbor 10.10.10.8 route-reflector-client
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.9 send-community extended
+  neighbor 10.10.10.9 route-reflector-client
  exit-address-family
 !
 !
@@ -1837,6 +1851,154 @@ line vty 5 15
 end
 
 JUMPHOST#
+
+Building configuration...
+
+Current configuration : 1878 bytes
+!
+! Last configuration change at 22:43:02 UTC Sat Oct 3 2015
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname PE6
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE2
+ rd 2:2
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$u7Br$CFWm8JDC8ZiT7VHxG2QEg0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip vrf forwarding PE2
+ ip address 10.10.10.60 255.255.255.255
+!
+interface Loopback100
+ ip address 10.10.10.6 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 172.16.6.2 255.255.255.0
+ negotiation auto
+ mpls ip
+!
+interface GigabitEthernet2
+ ip address 192.168.254.25 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ network 172.16.6.2 0.0.0.0 area 0
+!
+router bgp 200
+ bgp log-neighbor-changes
+ neighbor 10.10.10.9 remote-as 200
+ neighbor 10.10.10.9 update-source Loopback100
+ neighbor 10.10.10.10 remote-as 200
+ neighbor 10.10.10.10 update-source Loopback100
+ !
+ address-family ipv4
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.10 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.10.10.9 activate
+  neighbor 10.10.10.9 send-community both
+  neighbor 10.10.10.10 activate
+  neighbor 10.10.10.10 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PE2
+  redistribute connected
+ exit-address-family
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
 
 
 
