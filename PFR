@@ -1,0 +1,1994 @@
+
+
+
+Building configuration...
+
+Current configuration : 1217 bytes
+!
+! Last configuration change at 19:42:01 UTC Wed Oct 21 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname MGMT
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+ip domain name Ravello
+ip host LAN1 192.168.254.10
+ip host BR1 192.168.254.11
+ip host BR2 192.168.254.12
+ip host SP1 192.168.254.13
+ip host SP2 192.168.254.14
+ip host BR3 192.168.254.30
+ip host LAN2 192.168.254.31
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$QwVY$B/eP0AemzOicvp0QUyPxq0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1
+ ip address 192.168.254.1 255.255.255.0
+ negotiation auto
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 192.168.254.100
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ password cisco
+ login local
+line vty 5 15
+ password cisco
+ login local
+!
+!
+end
+
+
+
+
+LAN1#
+LAN1#sh run
+Building configuration...
+
+Current configuration : 1254 bytes
+!
+! Last configuration change at 14:33:27 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname LAN1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1
+ ip address 192.168.1.1 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.10 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+
+
+ip route 12.0.0.0 255.255.255.0 192.168.1.2
+ip route 13.0.0.0 255.255.255.0 192.168.1.2
+ip route 14.0.0.0 255.255.255.0 192.168.1.3
+ip route 15.0.0.0 255.255.255.0 192.168.1.3
+
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+
+
+
+
+BR1#
+BR1#
+BR1#sh run
+Building configuration...
+
+Current configuration : 1602 bytes
+!
+! Last configuration change at 14:32:05 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname BR1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+key chain PFR
+ key 1
+   key-string CISCO
+!
+!
+!
+pfr border
+ local Loopback0
+ master 150.1.4.4 key-chain PFR
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 150.1.3.3 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 192.168.1.2 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.11 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ description **** Link to SP1 ***
+ ip address 172.16.1.2 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet4
+ description **** Link to SP2 ***
+ ip address 172.16.2.2 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ redistribute connected subnets
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 172.16.1.1
+ip route 0.0.0.0 0.0.0.0 172.16.2.1 5
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+BR1#wr
+Building configuration...
+[OK]
+BR1#
+
+
+
+
+BR2#
+BR2#
+BR2#
+BR2#
+BR2#
+BR2#
+BR2#
+BR2#
+BR2#
+BR2#sh run
+Building configuration...
+
+Current configuration : 1999 bytes
+!
+! Last configuration change at 14:38:50 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname BR2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE1
+ rd 1:1
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+key chain PFR
+ key 1
+   key-string CISCO
+!
+!
+!
+pfr master
+ logging
+ !
+ border 150.1.4.4 key-chain PFR
+  interface GigabitEthernet4 external
+  interface GigabitEthernet3 external
+   max-xmit-utilization absolute 1
+  interface GigabitEthernet1 internal
+ !
+ border 150.1.3.3 key-chain PFR
+  interface GigabitEthernet1 internal
+  interface GigabitEthernet3 external
+   max-xmit-utilization absolute 1
+  interface GigabitEthernet4 external
+ !
+ !
+!
+pfr border
+ local Loopback0
+ master 150.1.4.4 key-chain PFR
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 150.1.4.4 255.255.255.0
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 192.168.1.3 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.12 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ ip address 172.16.4.2 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet4
+ ip address 172.16.5.2 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+ redistribute connected subnets
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 172.16.4.1
+ip route 0.0.0.0 0.0.0.0 172.16.5.1 5
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+BR2#
+
+
+
+SP1#
+SP1#
+SP1#
+SP1#
+SP1#
+SP1#
+SP1#sh run
+Building configuration...
+
+Current configuration : 1591 bytes
+!
+! Last configuration change at 14:45:03 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname SP1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 12.0.0.1 255.255.255.0
+!
+interface Loopback1
+ ip address 13.0.0.1 255.255.255.0
+!
+interface GigabitEthernet1
+ description *** Libnk to BR1 ***
+ ip address 172.16.1.1 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.13 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ ip address 172.16.2.1 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet4
+ ip address 172.16.10.1 255.255.255.0
+ negotiation auto
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 150.1.3.3 255.255.255.255 172.16.1.2
+ip route 150.1.3.3 255.255.255.255 172.16.2.2
+ip route 192.168.1.0 255.255.255.0 172.16.1.2
+ip route 192.168.1.0 255.255.255.0 172.16.2.2
+ip route 192.168.10.0 255.255.255.0 172.16.10.2
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+
+
+SP2#sh run
+Building configuration...
+
+Current configuration : 1502 bytes
+!
+! Last configuration change at 14:46:10 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname SP2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$A/oG$oDkQVIRu.VfyXmo.VEX0u/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip address 14.0.0.1 255.255.255.255
+!
+interface Loopback2
+ ip address 15.0.0.1 255.255.255.255
+!
+interface GigabitEthernet1
+ ip address 172.16.4.1 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.14 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ ip address 172.16.5.1 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet4
+ ip address 172.16.11.1 255.255.255.0
+ negotiation auto
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 150.1.4.4 255.255.255.255 172.16.4.2
+ip route 150.1.4.4 255.255.255.255 172.16.5.2
+ip route 192.168.1.0 255.255.255.0 172.16.4.2
+ip route 192.168.1.0 255.255.255.0 172.16.5.2
+ip route 192.168.10.0 255.255.255.0 172.16.11.2
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ password cisco
+ login local
+!
+!
+end
+
+SP2#
+
+
+
+
+
+===========================================
+
+
+
+BR3#sh run
+Building configuration...
+
+Current configuration : 1630 bytes
+!
+! Last configuration change at 14:41:57 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname BR3
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+key chain PFR
+ key 1
+   key-string CISCO
+!
+!
+!
+pfr master
+ logging
+ !
+ border 150.1.5.5 key-chain PFR
+  interface GigabitEthernet4 internal
+  interface GigabitEthernet2 external
+  interface GigabitEthernet1 external
+ !
+ !
+!
+pfr border
+ local Loopback0
+ master 150.1.5.5 key-chain PFR
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 150.1.5.5 255.255.255.0
+!
+interface GigabitEthernet1
+ ip address 172.16.10.2 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.30 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ ip address 172.16.11.2 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet4
+ ip address 192.168.10.2 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+!
+router ospf 1
+ redistribute connected subnets
+ network 172.16.1.2 0.0.0.0 area 0
+!
+
+ip route 12.0.0.0 255.255.255.0  172.16.10.1
+ip route 13.0.0.0 255.255.255.0  172.16.10.1
+ip route 14.0.0.0 255.255.255.0  172.16.11.1
+ip route 15.0.0.0 255.255.255.0  172.16.11.1
+
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+
+
+
+
+LAN2#sh run
+Building configuration...
+
+Current configuration : 1297 bytes
+!
+! Last configuration change at 14:43:58 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname LAN2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1
+ ip address 192.168.10.1 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.31 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 192.168.10.2
+ip route 12.0.0.0 255.255.255.0 192.168.10.2
+ip route 13.0.0.0 255.255.255.0 192.168.10.2
+ip route 14.0.0.0 255.255.255.0 192.168.10.2
+ip route 15.0.0.0 255.255.255.0 192.168.10.2
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+LAN2#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MCR#sh run
+Building configuration...
+
+Current configuration : 1077 bytes
+!
+! Last configuration change at 02:26:02 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname MCR
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1
+ ip address 192.168.1.1 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.10 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BR1#sh run
+Building configuration...
+
+Current configuration : 1570 bytes
+!
+! Last configuration change at 02:27:50 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname BR1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+key chain PFR
+ key 1
+   key-string CISCO
+!
+!
+!
+pfr border
+ local Loopback0
+ master 150.1.4.4 key-chain PFR
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 150.1.3.3 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 192.168.1.2 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.11 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ description **** Link to SP1 ***
+ ip address 172.16.1.2 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet4
+ description **** Link to SP2 ***
+ ip address 172.16.2.2 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 172.16.1.1
+ip route 0.0.0.0 0.0.0.0 172.16.2.1 5
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+BR1#
+
+
+
+
+Building configuration...
+
+Current configuration : 1964 bytes
+!
+! Last configuration change at 02:29:02 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname BR2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+ip vrf PE1
+ rd 1:1
+ route-target export 1:1
+ route-target import 1:1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+key chain PFR
+ key 1
+   key-string CISCO
+!
+!
+!
+pfr master
+ logging
+ !
+ border 150.1.3.3 key-chain PFR
+  interface GigabitEthernet4 external
+  interface GigabitEthernet3 external
+   max-xmit-utilization absolute 1
+  interface GigabitEthernet1 internal
+ !
+ border 150.1.4.4 key-chain PFR
+  interface GigabitEthernet1 internal
+  interface GigabitEthernet3 external
+   max-xmit-utilization absolute 1
+  interface GigabitEthernet4 external
+ !
+!
+pfr border
+ local Loopback0
+ master 150.1.4.4 key-chain PFR
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 150.1.4.4 255.255.255.0
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ ip address 192.168.1.3 255.255.255.0
+ ip ospf 1 area 0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.12 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ ip address 172.16.4.2 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet4
+ ip address 172.16.5.2 255.255.255.0
+ negotiation auto
+!
+router ospf 1
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 172.16.4.1
+ip route 0.0.0.0 0.0.0.0 172.16.5.1 5
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Building configuration...
+
+Current configuration : 1232 bytes
+!
+! Last configuration change at 02:30:18 UTC Tue Oct 20 2015 by demo
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname SP1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+no ip domain lookup
+
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$cEAO$69DLdIazzH.g1LGLOsKu1.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1
+ description *** Libnk to BR1 ***
+ ip address 172.16.1.1 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.13 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ ip address 172.16.2.1 255.255.255.0
+ negotiation auto
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 172.16.1.2
+ip route 0.0.0.0 0.0.0.0 172.16.2.2
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ password cisco
+ login local
+!
+!
+end
+
+
+
+
+
+
+
+
+
+
+
+SP2#sh run
+Building configuration...
+
+Current configuration : 1234 bytes
+!
+! Last configuration change at 02:27:39 UTC Tue Oct 20 2015
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname SP2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+multilink bundle-name authenticated
+!
+!
+!
+license udi pid CSR1000V sn 9LT7GSJVCI8
+spanning-tree extend system-id
+!
+username demo privilege 15 secret 5 $1$A/oG$oDkQVIRu.VfyXmo.VEX0u/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip address 14.0.0.1 255.255.255.255
+!
+interface Loopback2
+ ip address 15.0.0.1 255.255.255.255
+!
+interface GigabitEthernet1
+ ip address 172.16.4.1 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address 192.168.254.14 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet3
+ ip address 172.16.5.1 255.255.255.0
+ shutdown
+ negotiation auto
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 172.16.4.2
+ip route 0.0.0.0 0.0.0.0 172.16.5.2
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ password cisco
+ login local
+!
+!
+end
+
+SP2#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
