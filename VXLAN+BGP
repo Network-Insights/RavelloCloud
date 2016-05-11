@@ -1,0 +1,290 @@
+S2
+
+hostname s2
+username admin privilege 15 role network-admin secret arista
+arista privilege 15 role network-admin secret arista
+ip name-server 172.16.0.4
+ip domain-name arista.test
+ip routing
+interface loopback0
+   ip address 172.16.0.11/32
+!
+interface Management1
+   ip address 192.168.0.11/16
+!
+interface Ethernet4
+   description [dci1] (w->10.0.9.0)
+   no switchport
+   ip address 172.16.2.18/31
+!
+interface Ethernet3
+   description [l3] (w->10.0.8.0)
+   no switchport
+   ip address 172.16.2.16/31
+!
+interface Ethernet5
+   description [dci2] (w->10.0.10.0)
+   no switchport
+   ip address 172.16.2.20/31
+!
+interface Ethernet2
+   description [l2] (w->10.0.7.0)
+   no switchport
+   ip address 172.16.2.14/31
+!
+interface Ethernet1
+   description [l1] (w->10.0.6.0)
+   no switchport
+   ip address 172.16.2.12/31
+!
+!
+router bgp 64512
+   redistribute connected
+   redistribute static
+   neighbor 172.16.2.13 remote-as 64514
+   neighbor 172.16.2.15 remote-as 64515
+   neighbor 172.16.2.17 remote-as 64516
+   neighbor 172.16.2.19 remote-as 64517
+   neighbor 172.16.2.21 remote-as 64518
+!
+end
+!
+
+L1
+hostname l1
+username admin privilege 15 role network-admin secret arista
+ip name-server 172.16.0.4
+ntp server 172.16.0.4
+ip domain-name arista.test
+ip routing
+interface loopback0
+   ip address 172.16.0.12/32
+!
+interface Management1
+   ip address 192.168.0.12/16
+!
+interface Ethernet3
+   description [u1] (w->10.0.11.0)
+   switchport
+!
+interface Ethernet2
+   description [s2] (w->10.0.6.0)
+   no switchport
+   ip address 172.16.2.13/31
+!
+interface Ethernet1
+   description [s1] (w->10.0.1.0)
+   no switchport
+   ip address 172.16.2.3/31
+!
+!
+router bgp 64514
+   redistribute connected
+   redistribute static
+   neighbor 172.16.2.2 remote-as 64512
+   neighbor 172.16.2.12 remote-as 64512
+!
+end
+!
+dci1
+
+hostname dci1
+username admin privilege 15 role network-admin secret arista
+ip name-server 172.16.0.4
+ntp server 172.16.0.4
+ip domain-name arista.test
+ip routing
+interface loopback0
+   ip address 172.16.0.15/32
+!
+interface Management1
+   ip address 192.168.0.15/16
+!
+interface Ethernet2
+   description [s2] (w->10.0.9.0)
+   no switchport
+   ip address 172.16.2.19/31
+!
+interface Ethernet1
+   description [s1] (w->10.0.4.0)
+   no switchport
+   ip address 172.16.2.9/31
+!
+!
+router bgp 64517
+   redistribute connected
+   redistribute static
+   neighbor 172.16.2.8 remote-as 64512
+   neighbor 172.16.2.18 remote-as 64512
+!
+end
+!
+
+dci2
+hostname dci2
+username admin privilege 15 role network-admin secret arista
+ip name-server 172.16.0.4
+ntp server 172.16.0.4
+ip domain-name arista.test
+ip routing
+interface loopback0
+   ip address 172.16.0.16/32
+!
+interface Management1
+   ip address 192.168.0.16/16
+!
+interface Ethernet2
+   description [s2] (w->10.0.10.0)
+   no switchport
+   ip address 172.16.2.21/31
+!
+interface Ethernet1
+   description [s1] (w->10.0.5.0)
+   no switchport
+   ip address 172.16.2.11/31
+!
+!
+router bgp 64518
+   redistribute connected
+   redistribute static
+   neighbor 172.16.2.10 remote-as 64512
+   neighbor 172.16.2.20 remote-as 64512
+!
+end
+!
+!S1
+
+hostname s1
+username admin privilege 15 role network-admin secret arista
+arista privilege 15 role network-admin secret arista
+ip name-server 172.16.0.4
+ip domain-name arista.test
+ip routing
+interface loopback0
+   ip address 172.16.0.10/32
+!
+interface Management1
+   ip address 192.168.0.10/16
+!
+interface Ethernet4
+   description [dci1] (w->10.0.4.0)
+   no switchport
+   ip address 172.16.2.8/31
+!
+interface Ethernet3
+   description [l3] (w->10.0.3.0)
+   no switchport
+   ip address 172.16.2.6/31
+!
+interface Ethernet5
+   description [dci2] (w->10.0.5.0)
+   no switchport
+   ip address 172.16.2.10/31
+!
+interface Ethernet2
+   description [l2] (w->10.0.2.0)
+   no switchport
+   ip address 172.16.2.4/31
+!
+interface Ethernet1
+   description [l1] (w->10.0.1.0)
+   no switchport
+   ip address 172.16.2.2/31
+!
+!
+router bgp 64512
+   redistribute connected
+   redistribute static
+   neighbor 172.16.2.3 remote-as 64514
+   neighbor 172.16.2.5 remote-as 64515
+   neighbor 172.16.2.7 remote-as 64516
+   neighbor 172.16.2.9 remote-as 64517
+   neighbor 172.16.2.11 remote-as 64518
+!
+end
+!
+!
+L2
+
+hostname l2
+username admin privilege 15 role network-admin secret arista
+ip name-server 172.16.0.4
+ntp server 172.16.0.4
+ip domain-name arista.test
+ip routing
+interface loopback0
+   ip address 172.16.0.13/32
+!
+interface Management1
+   ip address 192.168.0.13/16
+!
+interface Ethernet4
+   description [v1] (w->10.0.14.0)
+   switchport
+!
+interface Ethernet3
+   description [u2] (w->10.0.12.0)
+   switchport
+!
+interface Ethernet2
+   description [s2] (w->10.0.7.0)
+   no switchport
+   ip address 172.16.2.15/31
+!
+interface Ethernet1
+   description [s1] (w->10.0.2.0)
+   no switchport
+   ip address 172.16.2.5/31
+!
+!L3
+hostname l3
+username admin privilege 15 role network-admin secret arista
+ip name-server 172.16.0.4
+ntp server 172.16.0.4
+ip domain-name arista.test
+ip routing
+interface loopback0
+   ip address 172.16.0.14/32
+!
+interface Management1
+   ip address 192.168.0.14/16
+!
+interface Ethernet3
+   description [u3] (w->10.0.13.0)
+   switchport
+!
+interface Ethernet2
+   description [s2] (w->10.0.8.0)
+   no switchport
+   ip address 172.16.2.17/31
+!
+interface Ethernet1
+   description [s1] (w->10.0.3.0)
+   no switchport
+   ip address 172.16.2.7/31
+!
+!
+router bgp 64516
+   redistribute connected
+   redistribute static
+   neighbor 172.16.2.6 remote-as 64512
+   neighbor 172.16.2.16 remote-as 64512
+!
+end
+!
+!
+
+router bgp 64515
+   redistribute connected
+   redistribute static
+   neighbor 172.16.2.4 remote-as 64512
+   neighbor 172.16.2.14 remote-as 64512
+!
+end
+!
+!
+
+
+!
+
+!
